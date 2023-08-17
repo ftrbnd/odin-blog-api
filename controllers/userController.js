@@ -60,7 +60,10 @@ exports.log_in = [
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        res.status(400).json({ message: 'Log-in validation error', errors: errors.array() });
+        res.status(400).json({
+          message: 'Log-in validation error',
+          errors: errors.array()
+        });
       } else {
         passport.authenticate('local', {
           successMessage: true,
