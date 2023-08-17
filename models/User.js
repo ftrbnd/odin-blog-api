@@ -7,11 +7,13 @@ const UserSchema = new Schema(
     username: {
       type: String,
       required: true,
+      minLength: 3,
       maxLength: 10
     },
     password: {
       type: String,
-      required: true
+      required: true,
+      minLength: 3
     },
     administrator: {
       type: Boolean,
