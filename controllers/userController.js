@@ -62,7 +62,6 @@ exports.log_in = [
       if (!errors.isEmpty()) {
         res.status(400).json({ message: 'Log-in validation error', errors: errors.array() });
       } else {
-        console.log('authenticating...', req.body.username, req.body.password);
         passport.authenticate('local', {
           successMessage: true,
           failureMessage: true
