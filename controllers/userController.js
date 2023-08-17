@@ -74,6 +74,18 @@ exports.log_in = [
   })
 ];
 
+exports.log_out = (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    if (!res.locals.currentUser) {
+      return res.status(404).json({ message: 'No user detected to log out.' });
+    }
+    res.json({ message: 'Successfully logged out.' });
+  });
+};
+
 exports.user_get = [
   getUser,
   (_req, res) => {

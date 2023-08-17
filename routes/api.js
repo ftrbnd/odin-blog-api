@@ -4,6 +4,10 @@ const userController = require('../controllers/userController');
 const postController = require('../controllers/postController');
 const commentController = require('../controllers/commentController');
 
+router.get('/', (_req, res) => {
+  res.json({ message: 'Blog API Index' });
+});
+
 // USERS //
 
 // GET ALL USERS
@@ -14,6 +18,9 @@ router.post('/users/signup', userController.sign_up);
 
 // LOG IN USER
 router.post('/users/login', userController.log_in);
+
+// LOG OUT USER
+router.post('/users/logout', userController.log_out);
 
 // GET ONE USER
 router.get('/users/:id', userController.user_get);
