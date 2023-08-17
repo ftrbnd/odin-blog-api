@@ -65,9 +65,12 @@ exports.log_in = [
           errors: errors.array()
         });
       } else {
+        console.log('Authenticating...', req.body.username, req.body.password);
         passport.authenticate('local', {
           successMessage: true,
-          failureMessage: true
+          successRedirect: '/',
+          failureMessage: true,
+          failureRedirect: '/api/users/login'
         })(req, res, next);
       }
     } catch (err) {
