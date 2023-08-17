@@ -16,8 +16,8 @@ exports.users_index = asyncHandler(async (_req, res) => {
 
 exports.sign_up = [
   // Validate and sanitize fields.
-  body('username', 'Invalid username').trim().isLength({ min: 1 }).escape(),
-  body('password', 'Invalid password').trim().isLength({ min: 1 }).escape(),
+  body('username', 'Invalid username').trim().isLength({ min: 3, max: 10 }).escape(),
+  body('password', 'Invalid password').trim().isLength({ min: 3, max: 10 }).escape(),
 
   // Process request after validation and sanitization.
   asyncHandler(async (req, res, next) => {
@@ -36,7 +36,12 @@ exports.sign_up = [
           res.status(400).json({ message: 'Sign-up validation error', errors: errors.array() });
         } else {
           await user.save();
-          res.json(user);
+          req.login(user, (err) => {
+            if (err) {
+              return next(err);
+            }
+            res.json(user);
+          });
         }
       });
     } catch (err) {
@@ -47,8 +52,8 @@ exports.sign_up = [
 ];
 
 exports.log_in = [
-  body('username', 'Invalid username').trim().isLength({ min: 1 }).escape(),
-  body('password', 'Invalid password').trim().isLength({ min: 1 }).escape(),
+  body('username', 'Invalid username').trim().isLength({ min: 3, max: 10 }).escape(),
+  body('password', 'Invalid password').trim().isLength({ min: 3, max: 10 }).escape(),
 
   asyncHandler(async (req, res, next) => {
     try {
@@ -57,9 +62,10 @@ exports.log_in = [
       if (!errors.isEmpty()) {
         res.status(400).json({ message: 'Log-in validation error', errors: errors.array() });
       } else {
+        console.log('authenticating...', req.body.username, req.body.password);
         passport.authenticate('local', {
-          successRedirect: '/api/users',
-          failureRedirect: '/api/users/login'
+          successMessage: true,
+          failureMessage: true
         })(req, res, next);
       }
     } catch (err) {
