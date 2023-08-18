@@ -40,7 +40,7 @@ exports.sign_up = [
             if (err) {
               return next(err);
             }
-            res.json({ username: user.username });
+            res.json({ username: user.username, id: user._id });
           });
         }
       });
@@ -72,7 +72,7 @@ exports.log_in = [
           if (!user) {
             return res.redirect('/api/users/login');
           }
-          res.json({ username: user.username });
+          res.json({ username: user.username, id: user._id });
         })(req, res, next);
       }
     } catch (err) {
