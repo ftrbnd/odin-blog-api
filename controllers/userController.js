@@ -40,7 +40,7 @@ exports.sign_up = [
             if (err) {
               return next(err);
             }
-            res.json(user);
+            res.json({ username: user.username });
           });
         }
       });
@@ -65,12 +65,14 @@ exports.log_in = [
           errors: errors.array()
         });
       } else {
-        console.log('Authenticating...', req.body.username, req.body.password);
-        passport.authenticate('local', {
-          successMessage: true,
-          successRedirect: '/',
-          failureMessage: true,
-          failureRedirect: '/api/users/login'
+        passport.authenticate('local', function (err, user, info, status) {
+          if (err) {
+            return next(err);
+          }
+          if (!user) {
+            return res.redirect('/api/users/login');
+          }
+          res.json({ username: user.username });
         })(req, res, next);
       }
     } catch (err) {
