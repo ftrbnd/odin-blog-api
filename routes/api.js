@@ -19,8 +19,12 @@ router.post('/users/signup', userController.sign_up);
 // LOG IN USER
 router.post('/users/login', userController.log_in);
 
+router.post('/users/refreshToken', userController.refresh_token);
+
+router.get('/users/me', userController.user_detail);
+
 // LOG OUT USER
-router.post('/users/logout', userController.log_out);
+router.get('/users/logout', userController.log_out);
 
 // GET ONE USER
 router.get('/users/:id', userController.user_get);

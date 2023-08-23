@@ -17,11 +17,6 @@ const UserSchema = new Schema(
       minLength: 3,
       maxLength: 10
     },
-    password: {
-      type: String,
-      required: true,
-      minLength: 3
-    },
     administrator: {
       type: Boolean,
       required: false

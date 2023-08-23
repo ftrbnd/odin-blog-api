@@ -4,55 +4,44 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const express = require('express');
-const path = require('path');
+const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-require('./utils/database');
-const session = require('express-session');
-const passport = require('passport');
-const bcrypt = require('bcryptjs');
 const cors = require('cors');
+const passport = require('passport');
+
+require('./utils/database');
+require('./utils/authenticate');
+require('./strategies/JwtStrategy');
+require('./strategies/LocalStrategy');
 
 const indexRouter = require('./routes/index');
 const apiRouter = require('./routes/api');
 
 const app = express();
 
-app.use(
-  session({
-    secret: process.env.COOKIE_SECRET,
-    resave: false,
-    saveUninitialized: true
-  })
-);
-app.use(passport.initialize());
-app.use(passport.session());
+const whitelist = process.env.WHITELISTED_DOMAINS ? process.env.WHITELISTED_DOMAINS.split(',') : [];
 
-app.use((req, res, next) => {
-  res.locals.currentUser = req.user;
-  next();
-});
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+};
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || whitelist.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-
-    credentials: true
-  })
-);
+app.use(cors(corsOptions));
+app.use(passport.initialize());
 
 app.use('/', indexRouter);
 app.use('/api', apiRouter);
 
-module.exports = app;
+const server = app.listen(process.env.PORT || 3000, () => {
+  const port = server.address().port;
+
+  console.log('App started at port', port);
+});
