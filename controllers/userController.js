@@ -41,7 +41,7 @@ exports.sign_up = [
               .save()
               .then(() => {
                 res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
-                res.send({ success: true, token });
+                res.send({ success: true, token, username: user.username });
               })
               .catch((err) => {
                 console.error(err);
@@ -75,7 +75,7 @@ exports.log_in = [
       try {
         await user.save();
         res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
-        res.send({ success: true, token });
+        res.send({ success: true, token, username: user.username });
       } catch (err) {
         res.statusCode = 500;
         res.send(err);
